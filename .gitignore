@@ -3,3 +3,5 @@ math/lab1/input/
 math/lab1/input/*
 math/lab2/input/
 math/lab2/input/*
+cmake-build-debug/
+.idea/
