@@ -5,6 +5,8 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <array>
+
 
 struct symbol {     // структура для хранения символа
     char symb;      // что за символ
@@ -61,7 +63,7 @@ struct node {                   // узел дерева
 
 std::map<char, symbol> symbols;                       // char -- символ, symbol -- структура с информацией о символе
 
-void make_codes_huffman(std::shared_ptr<node> node, char code) {
+void make_codes_huffman(std::shared_ptr<node> node, char code) {    // для создания кодов Хаффмана
     for (auto &s : node->symbs) {
         auto iter = symbols.find(s.symb);
         iter->second.code_huff += code;
@@ -129,10 +131,26 @@ void huffman(std::map<char, symbol> &symbs) {        // Функция, высч
 }
 
 
+bool cmp (std::pair<char, double> p1, std::pair<char, double> p2) { // для сортировки массива с символами
+    return p1.second > p2.second;
+}
+
+void shen_fan(){        // функция для расчета кодов Шеннона-Фано
+    std::vector<std::pair<char, double>> smbs;
+    for(auto &s : symbols){
+        smbs.insert(std::pair<char, double >(s.first, s.second.p));
+    }
+    std::sort(smbs.begin(), smbs.end(), cmp);
+    for (auto &it : smbs) {
+        std::cout << it.first << " " << it.second << "; ";
+    }
+}
+
+
 int main() {
     std::ifstream in("../input/1984_500.txt");
+    int sum = 0;                                     // кол-во символов
     if (in.is_open()) {                                  // чтение посимвольно с файла и сохранение количества каждого типа символов в map
-        int sum = 0;                                     // кол-во символов
         while (!in.eof()) {
             char c = in.get();
             auto iter = symbols.find(c);
@@ -154,8 +172,19 @@ int main() {
 
     huffman(symbols);
 
-    for (auto &s : symbols) {
-        std::cout << s.first << " " << s.second.code_huff << "\n";
+
+    std::cout << "Коды Хаффмана:\n";
+    for (auto &s : symbols) {                                               // вывод для задания 1
+        std::cout << s.first << "\t\t" << s.second.p << "\t\t" << s.second.code_huff << "\t\t\t" << s.second.code_huff.size() << "\n";
     }
+    std::cout << "Срeдняя длина кодов Хаффмана:\n";
+    double sr = 0;                                                          // подсчет средней длины
+    for (auto &s : symbols) {
+        sr += s.second.p * s.second.code_huff.size();
+    }
+    std::cout << sr << "\n";
+
+
+    //shen_fan();
     return 0;
 }
