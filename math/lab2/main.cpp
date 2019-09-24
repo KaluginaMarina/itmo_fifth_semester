@@ -131,19 +131,44 @@ void huffman(std::map<char, symbol> &symbs) {        // Функция, высч
 }
 
 
-bool cmp (std::pair<char, double> p1, std::pair<char, double> p2) { // для сортировки массива с символами
+bool cmp(std::pair<char, double> p1, std::pair<char, double> p2) { // для сортировки массива с символами
     return p1.second > p2.second;
 }
 
-void shen_fan(){        // функция для расчета кодов Шеннона-Фано
+void shen_fan_splt(std::vector<std::pair<char, double>> smbs, char code) {
+    double sum = 0;
+    double sum1 = 0;
+    std::vector<std::pair<char, double>> v1;
+    std::vector<std::pair<char, double>> v2;
+    for (auto &s : smbs) {
+        sum += s.second;
+        auto iter = symbols.find(s.first);
+        iter->second.code_sh_f += code;             // добавляем букву в код
+    }
+    double sum2 = sum;
+    if (smbs.size() == 1) {
+        return;
+    }
+    for (auto &s : smbs) {               // разделяем вектор на 2
+        if (sum1 < sum2) {
+            v1.push_back(s);
+            sum1 += s.second;
+            sum2 -= sum1;
+        } else {
+            v2.push_back(s);
+        }
+    }
+    shen_fan_splt(v1, '0');
+    shen_fan_splt(v2, '1');
+}
+
+void shen_fan() {        // функция для расчета кодов Шеннона-Фано
     std::vector<std::pair<char, double>> smbs;
-    for(auto &s : symbols){
-        smbs.insert(std::pair<char, double >(s.first, s.second.p));
+    for (auto &s : symbols) {
+        smbs.emplace_back(std::pair<char, double>(s.first, s.second.p));
     }
     std::sort(smbs.begin(), smbs.end(), cmp);
-    for (auto &it : smbs) {
-        std::cout << it.first << " " << it.second << "; ";
-    }
+    shen_fan_splt(smbs, ' ');
 }
 
 
@@ -175,16 +200,30 @@ int main() {
 
     std::cout << "Коды Хаффмана:\n";
     for (auto &s : symbols) {                                               // вывод для задания 1
-        std::cout << s.first << "\t\t" << s.second.p << "\t\t" << s.second.code_huff << "\t\t\t" << s.second.code_huff.size() << "\n";
+        std::cout << s.first << "\t\t" << s.second.p << "\t\t" << s.second.code_huff << "\t\t\t"
+                  << s.second.code_huff.size() << "\n";
     }
     std::cout << "Срeдняя длина кодов Хаффмана:\n";
     double sr = 0;                                                          // подсчет средней длины
     for (auto &s : symbols) {
         sr += s.second.p * s.second.code_huff.size();
     }
-    std::cout << sr << "\n";
+    std::cout << sr << "\n\n\n";
 
+    shen_fan();
 
-    //shen_fan();
+    std::cout << "Коды Шеннона-Фано:\n";                                    // вывод задания 2
+    for (auto &s : symbols) {
+        std::cout << s.first << "\t\t" << s.second.p << "\t\t" << s.second.code_sh_f << "\t\t\t"
+                  << s.second.code_sh_f.size() - 1<< "\n";
+    }
+    sr = 0;
+    std::cout << "Срeдняя длина кодов Шеннона-Фано:\n";
+    for (auto &s : symbols) {
+        sr += s.second.p * s.second.code_sh_f.size();
+    }
+    std::cout << sr << "\n\n\n";
+
+    
     return 0;
 }
