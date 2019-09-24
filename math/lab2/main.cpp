@@ -62,44 +62,44 @@ struct node {                   // узел дерева
 void huffman(std::map<char, symbol> &symbs) {        // Функция, высчитывающаяя код Хаффмана
     std::vector<std::shared_ptr<node>> nodes;
     for (auto &symb : symbs) {
-        nodes.insert(nodes.end(), std::make_shared<node>(std::vector<symbol>(symb.first), symb.second.p, std::shared_ptr<node>(), std::shared_ptr<node>()));
+        std::vector<symbol> s;
+        s.push_back(symb.second);
+        nodes.insert(nodes.end(), std::make_shared<node>(s, symb.second.p, std::shared_ptr<node>(), std::shared_ptr<node>()));
     }
-    for (int i = 0; i < symbs.size() - 1; ++i) {
-        // найдем 1 минимальную
+    for (int i = 0; i < symbs.size() - 2; ++i) {
+        // найдем 1 минимальную, сохраним:
         double min = 2;
-       /* std::shared_ptr<node> min_node;
+        std::shared_ptr<node> min_node;
         for (auto & node : nodes){
-            if (node->p < min) {
+            if (node->p <= min) {
                 min = node->p;
                 min_node = node;
-
             }
-        }*/
-       /* nodes.erase( std::remove_if(nodes.begin(), nodes.end(), [&](std::shared_ptr<node> const & n) {
+        }
+        // удалим из вектора:
+       nodes.erase( std::remove_if(nodes.begin(), nodes.end(), [&](std::shared_ptr<node> const & n) {
                          return n == min_node;
                      }),
-                     nodes.end());*/
-        // найдем 2 минимальную
+                     nodes.end());
+        // найдем 2 минимальную, сохраним:
         min = 2;
-       /* std::shared_ptr<node> min2_node;
+        std::shared_ptr<node> min2_node;
         for (auto & node : nodes){
-            if (node->p < min) {
+            if (node->p <= min) {
                 min = node->p;
                 min2_node = node;
-
             }
-        }*/
-     /*   nodes.erase( std::remove_if(nodes.begin(), nodes.end(), [&](std::shared_ptr<node> const & n) {
+        }
+        // удалим из вектора:
+        nodes.erase( std::remove_if(nodes.begin(), nodes.end(), [&](std::shared_ptr<node> const & n) {
                          return n == min2_node;
                      }),
-                     nodes.end());*/
-        // создадим узел
-      /*  std::vector<symbol> concat(min2_node->symbs.begin(), min2_node->symbs.end());
-        concat.insert(concat.end(), min_node->symbs.begin(), min_node->symbs.end());*/
-//        nodes.insert(nodes.end(), std::make_shared<node>(std::move(concat), min2_node->p + min2_node->p, min_node, min2_node));
-    }
-    for(auto it = nodes.begin(); it != nodes.end(); ++it){
-        std::cout << (*it)->p << "\n";
+                     nodes.end());
+        // создадим узел:
+        std::vector<symbol> concat(min2_node->symbs.begin(), min2_node->symbs.end());
+        concat.insert(concat.end(), min_node->symbs.begin(), min_node->symbs.end());
+        nodes.insert(nodes.end(), std::make_shared<node>(std::move(concat), min2_node->p + min_node->p, min_node, min2_node));
+
     }
 }
 
@@ -121,7 +121,7 @@ int main() {
             sum++;
         }
         for (auto iter = symbs.begin(); iter != symbs.end(); iter++) {   // расчет вероятностей
-            iter->second.p = iter->second.n / sum;
+            iter->second.p = (double)iter->second.n / (double)sum;
         }
     } else {
         std::cout << "Файл не найден";
