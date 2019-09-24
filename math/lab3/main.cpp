@@ -5,7 +5,7 @@
 struct symbol {     // структура для символа
     char c;         // символ
     int n;          // количество в тексте
-    double p;       // вероятность
+    long double p;       // вероятность
     long double a_beg;   // начало отрезка
     long double a_end;   // конец отрезка
 
@@ -15,13 +15,10 @@ struct symbol {     // структура для символа
 };
 
 std::map<char, symbol> symbols;
-std::string str = "Pack my box with five dozen liquor jugs";
+std::string str;
 
-void read_from_file() {                                  // считывание с файла
-    std::string filename;
-    //std::cin >> filename;
-    //std::ifstream in(filename);
-    std::ifstream in("../input/pangram.txt");
+void read_from_file(std::string filename) {                                  // считывание с файла
+    std::ifstream in(filename);
     int sum = 0;                                         // кол-во символов
     if (in.is_open()) {                                  // чтение посимвольно с файла и сохранение количества каждого типа символов в map
         while (!in.eof()) {
@@ -44,6 +41,14 @@ void read_from_file() {                                  // считывание
     in.close();
 }
 
+void read_string(std::string filename){
+    std::ifstream in(filename);
+    if (in.is_open()) {
+        getline(in, str);
+    }
+    in.close();
+}
+
 void make_segments() {                                   // создание границ отрезков
     double courser = 0;
     for (auto &s : symbols) {
@@ -55,23 +60,31 @@ void make_segments() {                                   // создание г�
 
 long double code(long double a_beg, long double a_end, char *c) {      // кодирование информации
     auto it = symbols.find(*c);
-    long double  new_a_beg = a_beg + (a_end - a_beg) * it->second.a_beg;
+    long double  new_a_beg = a_beg + (a_end - a_beg) * it->second.a_beg;    // новые границы
     long double new_a_end = a_beg + (a_end - a_beg) * it->second.a_end;
     printf("%c [%.53Lf; %.53Lf) -> [%.53Lf; %.53Lf)\n", *c, a_beg, a_end, new_a_beg, new_a_end);
     c++;
-    if (*c) {
+    if (*c) {                                                               // продолжить рекурсивно, пока не найден конец файла
         return code(new_a_beg, new_a_end, c);
     } else {
-        return (new_a_beg + new_a_end) / 2;
+        return (new_a_beg + new_a_end);
     }
 }
 
+std::string decode(long double res, long double a_beg, long double a_end) {
+
+}
+
 int main() {
-    read_from_file();
+    std::string filename = "../input/test.txt";
+    //std::cin >> filename;
+    read_from_file(filename);
+    read_string(filename);
     make_segments();
     long double res = code(0, 1, &str[0]);
-    for (auto &s : symbols) {
-        std::cout << s.first << " " << s.second.p << "[" << s.second.a_beg << "; " << s.second.a_end << ")" << "\n";
-    }
+    std::cout << "Арифметическое кодирование фразы: \"" << str << "\"\n";
+    std::cout << "Результат: ";
+    printf("%.53Lf\n", res);
+    //std::cout << "Коэффициент сжатия: " << (double)sizeof(res)/ sizeof(str);
     return 0;
 }
