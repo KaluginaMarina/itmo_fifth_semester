@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <memory>
 #include <array>
+#include <cmath>
 
 
 struct symbol {     // структура для хранения символа
@@ -173,7 +174,10 @@ void shen_fan() {        // функция для расчета кодов Ше
 
 
 int main() {
-    std::ifstream in("../input/1984_500.txt");
+    std::string filename;
+    std::cin >> filename;
+    //std::ifstream in("../input/1984_500.txt");
+    std::ifstream in(filename);
     int sum = 0;                                     // кол-во символов
     if (in.is_open()) {                                  // чтение посимвольно с файла и сохранение количества каждого типа символов в map
         while (!in.eof()) {
@@ -223,7 +227,6 @@ int main() {
         sr += s.second.p * s.second.code_sh_f.size();
     }
     std::cout << sr << "\n\n\n";
-
     
     return 0;
 }
