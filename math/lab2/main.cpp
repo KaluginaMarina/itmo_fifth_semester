@@ -204,7 +204,7 @@ int main() {
 
     std::cout << "Коды Хаффмана:\n";
     for (auto &s : symbols) {                                               // вывод для задания 1
-        std::cout << s.first << "\t\t" << s.second.p << "\t\t" << s.second.code_huff << "\t\t\t"
+        std::cout << "\"" << s.first << "\"" << "\t\t" << s.second.p << "\t\t" << s.second.code_huff << "\t\t\t"
                   << s.second.code_huff.size() << "\n";
     }
     std::cout << "Срeдняя длина кодов Хаффмана:\n";
@@ -218,8 +218,8 @@ int main() {
 
     std::cout << "Коды Шеннона-Фано:\n";                                    // вывод задания 2
     for (auto &s : symbols) {
-        std::cout << s.first << "\t\t" << s.second.p << "\t\t" << s.second.code_sh_f << "\t\t\t"
-                  << s.second.code_sh_f.size() - 1<< "\n";
+        std::cout << "\"" << s.first << "\"" << "\t\t" << s.second.p << "\t\t" << s.second.code_sh_f << "\t\t\t"
+                  << s.second.code_sh_f.size() - 1 << "\n";
     }
     sr = 0;
     std::cout << "Срeдняя длина кодов Шеннона-Фано:\n";
@@ -227,6 +227,6 @@ int main() {
         sr += s.second.p * s.second.code_sh_f.size();
     }
     std::cout << sr << "\n\n\n";
-    
+
     return 0;
 }
