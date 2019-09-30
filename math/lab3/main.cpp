@@ -16,6 +16,7 @@ struct symbol {     // структура для символа
 
 std::map<char, symbol> symbols;
 std::string str;
+int size = 0;
 
 void read_from_file(std::string filename) {                                  // считывание с файла
     std::ifstream in(filename);
@@ -31,6 +32,7 @@ void read_from_file(std::string filename) {                                  // 
                 symbols.insert({c, s});
             }
             sum++;
+            size++;
         }
         for (auto &symbol : symbols) {                   // расчет вероятностей
             symbol.second.p = (double) symbol.second.n / (double) sum;
@@ -38,6 +40,7 @@ void read_from_file(std::string filename) {                                  // 
     } else {
         std::cout << "Файл не найден";
     }
+    size--;
     in.close();
 }
 
@@ -68,20 +71,34 @@ code(long double a_beg, long double a_end, char *c) {      // кодирован
     if (*c) {                                                               // продолжить рекурсивно, пока не найден конец файла
         return code(new_a_beg, new_a_end, c);
     } else {
-        std::pair<long double, long double> interval = std::pair<long double, long double>(new_a_beg, new_a_end);
+        std::pair<long double, long double> interval = std::pair<long double, long double>(a_beg, a_end);
         std::pair<long double, std::pair<long double, long double>> res = std::pair<long double, std::pair<long double, long double>>(
                 (new_a_beg + new_a_end) / 2, interval);
         return res;
     }
 }
 
-std::string decode(long double res, long double a_beg, long double a_end) {
-    
+std::string decode(long double code, long double a_beg, long double a_end, std::string res) {   //декодирование фразы
+    for (auto & character : symbols) {
+         if (code >= character.second.a_beg && code < character.second.a_end) {    // поиск символа
+            res += character.first;
+            code = (code - character.second.a_beg)/(character.second.a_end - character.second.a_beg);   //нормализация и новый код
+            size--;
+            if (!size) {
+                return res;
+            }
+            return decode(code, character.second.a_beg, character.second.a_end, res);       // рекурсивно, пока не найдем конец строки
+        }
+    }
+}
+
+double H(){
+
 }
 
 int main() {
     std::string filename = "../input/test.txt";
-    //std::cin >> filename;
+    std::cin >> filename;
     read_from_file(filename);
     read_string(filename);
     make_segments();
@@ -89,7 +106,8 @@ int main() {
     std::cout << "Арифметическое кодирование фразы: \"" << str << "\"\n";
     std::cout << "Результат: ";
     printf("%.53Lf\n", res.first);
-    //std::cout << "Коэффициент сжатия: " << (double)sizeof(res)/ sizeof(str);
-    std::cout << decode(res.first, res.second.first, res.second.second);
+    std::cout << "Декодированная строка: " << decode(res.first, res.second.first, res.second.second, "");
+
+    std::cout << "Коэффициент сжатия: " << (sizeof(char) * str.size()) / (double)sizeof(res)  << "\n";
     return 0;
 }
