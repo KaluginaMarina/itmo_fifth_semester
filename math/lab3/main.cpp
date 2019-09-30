@@ -41,7 +41,7 @@ void read_from_file(std::string filename) {                                  // 
     in.close();
 }
 
-void read_string(std::string filename){
+void read_string(std::string filename) {
     std::ifstream in(filename);
     if (in.is_open()) {
         getline(in, str);
@@ -58,21 +58,25 @@ void make_segments() {                                   // создание г�
     }
 }
 
-long double code(long double a_beg, long double a_end, char *c) {      // кодирование информации
+std::pair<long double, std::pair<long double, long double>>                 // в результате возвращается код и пара -- начало и конец отрезка
+code(long double a_beg, long double a_end, char *c) {      // кодирование информации
     auto it = symbols.find(*c);
-    long double  new_a_beg = a_beg + (a_end - a_beg) * it->second.a_beg;    // новые границы
+    long double new_a_beg = a_beg + (a_end - a_beg) * it->second.a_beg;    // новые границы
     long double new_a_end = a_beg + (a_end - a_beg) * it->second.a_end;
     printf("%c [%.53Lf; %.53Lf) -> [%.53Lf; %.53Lf)\n", *c, a_beg, a_end, new_a_beg, new_a_end);
     c++;
     if (*c) {                                                               // продолжить рекурсивно, пока не найден конец файла
         return code(new_a_beg, new_a_end, c);
     } else {
-        return (new_a_beg + new_a_end);
+        std::pair<long double, long double> interval = std::pair<long double, long double>(new_a_beg, new_a_end);
+        std::pair<long double, std::pair<long double, long double>> res = std::pair<long double, std::pair<long double, long double>>(
+                (new_a_beg + new_a_end) / 2, interval);
+        return res;
     }
 }
 
 std::string decode(long double res, long double a_beg, long double a_end) {
-
+    
 }
 
 int main() {
@@ -81,10 +85,11 @@ int main() {
     read_from_file(filename);
     read_string(filename);
     make_segments();
-    long double res = code(0, 1, &str[0]);
+    std::pair<long double, std::pair<long double, long double>> res = code(0, 1, &str[0]);
     std::cout << "Арифметическое кодирование фразы: \"" << str << "\"\n";
     std::cout << "Результат: ";
-    printf("%.53Lf\n", res);
+    printf("%.53Lf\n", res.first);
     //std::cout << "Коэффициент сжатия: " << (double)sizeof(res)/ sizeof(str);
+    std::cout << decode(res.first, res.second.first, res.second.second);
     return 0;
 }
