@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <fstream>
+#include <cmath>
 
 struct symbol {     // структура для символа
     char c;         // символ
@@ -61,8 +62,7 @@ void make_segments() {                                   // создание г�
     }
 }
 
-std::pair<long double, std::pair<long double, long double>>                 // в результате возвращается код и пара -- начало и конец отрезка
-code(long double a_beg, long double a_end, char *c) {      // кодирование информации
+double code(long double a_beg, long double a_end, char *c) {      // кодирование информации
     auto it = symbols.find(*c);
     long double new_a_beg = a_beg + (a_end - a_beg) * it->second.a_beg;    // новые границы
     long double new_a_end = a_beg + (a_end - a_beg) * it->second.a_end;
@@ -71,14 +71,11 @@ code(long double a_beg, long double a_end, char *c) {      // кодирован
     if (*c) {                                                               // продолжить рекурсивно, пока не найден конец файла
         return code(new_a_beg, new_a_end, c);
     } else {
-        std::pair<long double, long double> interval = std::pair<long double, long double>(a_beg, a_end);
-        std::pair<long double, std::pair<long double, long double>> res = std::pair<long double, std::pair<long double, long double>>(
-                (new_a_beg + new_a_end) / 2, interval);
-        return res;
+        return (new_a_beg + new_a_end) / 2;
     }
 }
 
-std::string decode(long double code, long double a_beg, long double a_end, std::string res) {   //декодирование фразы
+std::string decode(long double code, std::string res) {   //декодирование фразы
     for (auto & character : symbols) {
          if (code >= character.second.a_beg && code < character.second.a_end) {    // поиск символа
             res += character.first;
@@ -87,13 +84,18 @@ std::string decode(long double code, long double a_beg, long double a_end, std::
             if (!size) {
                 return res;
             }
-            return decode(code, character.second.a_beg, character.second.a_end, res);       // рекурсивно, пока не найдем конец строки
+            return decode(code, res);       // рекурсивно, пока не найдем конец строки
         }
     }
 }
 
-double H(){
-
+double H(){                                     // энтропия
+    double res = 0;
+    for (auto &item : symbols) {
+        res -= item.second.p * std::log2(item.second.p);
+    }
+    res *= str.size();
+    return res;
 }
 
 int main() {
@@ -102,12 +104,12 @@ int main() {
     read_from_file(filename);
     read_string(filename);
     make_segments();
-    std::pair<long double, std::pair<long double, long double>> res = code(0, 1, &str[0]);
+    long double res = code(0, 1, &str[0]);
     std::cout << "Арифметическое кодирование фразы: \"" << str << "\"\n";
     std::cout << "Результат: ";
-    printf("%.53Lf\n", res.first);
-    std::cout << "Декодированная строка: " << decode(res.first, res.second.first, res.second.second, "");
+    printf("%.53Lf\n", res);
+    std::cout << "Декодированная строка: " << decode(res, "") << "\n";
 
-    std::cout << "Коэффициент сжатия: " << (sizeof(char) * str.size()) / (double)sizeof(res)  << "\n";
+    std::cout << "Коэффициент сжатия: " << H()/sizeof(res) << "\n";
     return 0;
 }
