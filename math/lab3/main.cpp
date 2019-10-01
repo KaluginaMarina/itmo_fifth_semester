@@ -99,6 +99,7 @@ double H(){                                     // энтропия
 }
 
 int main() {
+    std::cout << "Введите имя файла\n";
     std::string filename = "../input/test.txt";
     std::cin >> filename;
     read_from_file(filename);
