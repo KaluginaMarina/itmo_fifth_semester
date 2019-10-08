@@ -7,13 +7,7 @@ using  namespace std;
 
 int main() {
     cout << "=========Код Хэмминга=========" << endl << endl;
-    // (7,4) (15,11) (31,26) -> bez bita parnosti
-    // (8,4) (16,11) (32,26) -> sa  bit  parnosti
-    // skraceni (x,y) .. x je manje nego sto je obicno ako je 1 to je onda obican kod sa ponavljanjem!
 
-
-
-    /***********************USER INSERT*******************************/
     int n;
     cout << "Введите длинну кода (минимум 7)" << endl;
     cin >> n;
@@ -54,13 +48,9 @@ int main() {
         uslovK = k + ceil(log2(k + 1)) + detection;
     }
 
-    /*********************END USERR INSERT******************************/
-
     Heming* H = new Heming(n, k, detection);
     H->code();
 
     return 0;
-
-
 }
 

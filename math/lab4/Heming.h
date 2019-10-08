@@ -8,10 +8,11 @@ using namespace std;
 #define BIT_LENGHT 8
 #define ERRORS 2
 
-// N -> ukupan broj bita u kodovanoj reci
-// K -> broj infromacionih bita 
-// M -> broj zastitnih bita
-// 2^m >= k + m + 1
+
+// N - общее окл-во бит в закодированном сообщении
+// K - количество информационных бит
+// M - количество контрольных бит
+// 2^m = k + m + 1
 
 class Heming {
 
