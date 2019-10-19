@@ -230,7 +230,7 @@ void Heming::findSindrom() {
 
 void Heming::writeCommenar() {
     if (d) {
-        cout << "Последний бит: :" << codeWordWithError[n - 1] << endl;
+        //cout << "Последний бит: :" << codeWordWithError[n - 1] << endl;
         if (sindrom == 0) {
             if (sindromLastBit == 0)
                 cout << "Не было ошибки" << endl;
