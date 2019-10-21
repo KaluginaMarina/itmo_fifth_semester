@@ -3,6 +3,7 @@
 #include<string>
 using namespace std;
 
+// функция для того, чтобы из строки получить последовательность бит
 vector<int> parseInt(string a) {
     vector<int> result(a.length(), 0);
     for (int i = 0; i < a.length(); i++)
@@ -23,7 +24,7 @@ vector<int> add(vector<int> a, vector<int> b, int c=0) {
     return sum;
 }
 
-// рассчитать код
+// рассчитать код. Функция возвращает остаток от деления
 vector<int> divide(vector<int> data, vector<int> crc) {
     vector<int> result = data;
     for (int i = 0; i < crc.size() - 1; i++)
