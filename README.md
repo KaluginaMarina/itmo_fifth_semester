@@ -11,3 +11,5 @@
 [Математическое моделирование](https://github.com/KaluginaMarina/itmo_fifth_semester/tree/master/modeling)
 
 Алиев Т.И.
+
+[Методы оптимизации](https://github.com/KaluginaMarina/itmo_fifth_semester/tree/master/optim)
